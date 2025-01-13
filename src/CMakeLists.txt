@@ -8,7 +8,7 @@ find_package( OpenGL REQUIRED )
 find_package( glfw3 REQUIRED )
 
 add_executable(opengl-learn
-  src/main.cpp
+  main.cpp
 )
 
 target_include_directories(opengl-learn PRIVATE dependencies)
