@@ -13,4 +13,4 @@ This is a repository I'll use for various tests using Open-GL to create cross-pl
 - [Additional cmake configurations](./cmake/)
   For now, there's only the `./cmake/FindGLFW3.cmake` file which points to any installation of GLFW in Windows, Mac and Linux
 - [Notes](./notes/)
-  Additional notes regarding the installation process and what I have learne
+  Additional notes regarding the installation process and what I have learned

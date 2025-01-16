@@ -5,6 +5,9 @@ set(CMAKE_CXX_STANDARD 17) # this does nothing for MSVC, use target_compile_opti
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
+# generate includes and commands for clang to read
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Download GLAD
 include(FetchContent)
 FetchContent_Declare(
