@@ -1,7 +1,42 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+#include <filesystem>
+#include <fstream>
 #include <glad/gl.h>
 #include <iostream>
+#include <string>
+
+namespace fs = std::filesystem;
+
+// the build path is the considered the current path
+fs::path shaders = "../src/shaders";
+fs::path vertex_shader = "../src/shaders/vertex.glsl";
+fs::path fragment_shader = "../src/shaders/fragment.glsl";
+
+void check_exists(const fs::path &p, fs::file_status s = fs::file_status{}) {
+  std::cout << p;
+  if (fs::status_known(s) ? fs::exists(s) : fs::exists(p))
+    std::cout << " exists\n";
+  else
+    std::cout << " does not exist\n";
+}
+
+//  TODO: improve this function, 2 conversions to a char buffer feels wrong
+std::string readShaders(const std::string &filename) {
+  check_exists(filename);
+  std::ifstream myfile(filename);
+  // Read the whole file into a string
+  std::string fileContent((std::istreambuf_iterator<char>(myfile)),
+                          std::istreambuf_iterator<char>());
+
+  // Close the file (optional here since the file will be
+  // closed automatically when file goes out of scope)
+  myfile.close();
+
+  // Output the file content to the console
+  std::cout << "File content:\n" << fileContent << std::endl;
+  return fileContent;
+}
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -10,22 +45,16 @@ void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-const char *vertexShaderSource =
-    "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
-const char *fragmentShaderSource =
-    "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "}\n\0";
-
 int main() {
+
+  std::string v_source = readShaders(vertex_shader.generic_string());
+  std::string f_source = readShaders(fragment_shader.generic_string());
+  std::cout << v_source << std::endl;
+  std::cout << f_source << std::endl;
+
+  const char *vertexShaderSource = v_source.c_str();
+  const char *fragmentShaderSource = f_source.c_str();
+
   // glfw: initialize and configure
   // ------------------------------
   glfwInit();
@@ -108,8 +137,8 @@ int main() {
   unsigned int VBO, VAO;
   glGenVertexArrays(1, &VAO);
   glGenBuffers(1, &VBO);
-  // bind the Vertex Array Object first, then bind and set vertex buffer(s), and
-  // then configure vertex attributes(s).
+  // bind the Vertex Array Object first, then bind and set vertex buffer(s),
+  // and then configure vertex attributes(s).
   glBindVertexArray(VAO);
 
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -118,9 +147,9 @@ int main() {
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
   glEnableVertexAttribArray(0);
 
-  // note that this is allowed, the call to glVertexAttribPointer registered VBO
-  // as the vertex attribute's bound vertex buffer object so afterwards we can
-  // safely unbind
+  // note that this is allowed, the call to glVertexAttribPointer registered
+  // VBO as the vertex attribute's bound vertex buffer object so afterwards we
+  // can safely unbind
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   // You can unbind the VAO afterwards so other VAO calls won't accidentally
@@ -146,14 +175,14 @@ int main() {
 
     // draw our first triangle
     glUseProgram(shaderProgram);
-    glBindVertexArray(
-        VAO); // seeing as we only have a single VAO there's no need to bind it
-              // every time, but we'll do so to keep things a bit more organized
+    glBindVertexArray(VAO); // seeing as we only have a single VAO there's no
+                            // need to bind it every time, but we'll do so to
+                            // keep things a bit more organized
     glDrawArrays(GL_TRIANGLES, 0, 3);
     // glBindVertexArray(0); // no need to unbind it every time
 
-    // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved
-    // etc.)
+    // glfw: swap buffers and poll IO events (keys pressed/released, mouse
+    // moved etc.)
     // -------------------------------------------------------------------------------
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -165,8 +194,8 @@ int main() {
   return 0;
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this
-// frame and react accordingly
+// process all input: query GLFW whether relevant keys are pressed/released
+// this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window) {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -178,6 +207,7 @@ void processInput(GLFWwindow *window) {
 // ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
   // make sure the viewport matches the new window dimensions; note that width
-  // and height will be significantly larger than specified on retina displays.
+  // and height will be significantly larger than specified on retina
+  // displays.
   glViewport(0, 0, width, height);
 }

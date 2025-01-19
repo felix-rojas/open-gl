@@ -29,4 +29,4 @@ bld/
 # Add this line
 out/
 build/
-  .cache
+.cache/
