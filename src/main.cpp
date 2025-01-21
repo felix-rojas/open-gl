@@ -1,3 +1,13 @@
+/******************************************************************************
+ * This is the main file from which we run the Window loop
+ * @file main.cpp
+ * @author felix-rojas
+ * @brief
+ * @version
+ * @date 2025-01-20
+ *
+ ******************************************************************************/
+
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <filesystem>
@@ -6,22 +16,37 @@
 #include <iostream>
 #include <string>
 
-namespace fs = std::filesystem;
-
 // the build path is the considered the current path
-fs::path shaders = "../src/shaders";
-fs::path vertex_shader = "../src/shaders/vertex.glsl";
-fs::path fragment_shader = "../src/shaders/fragment.glsl";
+std::filesystem::path shaders = "../src/shaders";
+std::filesystem::path vertex_shader = "../src/shaders/vertex.glsl";
+std::filesystem::path fragment_shader = "../src/shaders/fragment.glsl";
 
-void check_exists(const fs::path &p, fs::file_status s = fs::file_status{}) {
+/**
+ * @brief Check if the current file exists before reading, OS-independent
+ *
+ * @param p is a filesystem path
+ * @param s is the file status known by the OS
+ * @return void, used for debugging
+ */
+
+void check_exists(
+    const std::filesystem::path &p,
+    std::filesystem::file_status s = std::filesystem::file_status{}) {
   std::cout << p;
-  if (fs::status_known(s) ? fs::exists(s) : fs::exists(p))
+  if (std::filesystem::status_known(s) ? std::filesystem::exists(s)
+                                       : std::filesystem::exists(p))
     std::cout << " exists\n";
   else
     std::cout << " does not exist\n";
 }
 
-//  TODO: improve this function, 2 conversions to a char buffer feels wrong
+/**
+ * @brief Read shader files
+ *
+ * @param filename is a string poiting towards the shader file to loadd
+ * @return string with all the data from the shader file
+ */
+
 std::string readShaders(const std::string &filename) {
   check_exists(filename);
   std::ifstream myfile(filename);
@@ -34,7 +59,7 @@ std::string readShaders(const std::string &filename) {
   myfile.close();
 
   // Output the file content to the console
-  std::cout << "File content:\n" << fileContent << std::endl;
+  // std::cout << "File content:\n" << fileContent << std::endl;
   return fileContent;
 }
 
