@@ -26,7 +26,10 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
-# Add this line
 out/
 build/
 .cache/
+
+# Docs ignore
+docs/html/
+docs/latex/
