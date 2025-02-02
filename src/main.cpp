@@ -16,6 +16,10 @@
 #include <iostream>
 #include <string>
 
+// utility for input_map debugging
+#include "input_mapping.h"
+input_mapping *input_mapping::instance = nullptr;
+
 // the build path is the considered the current path
 std::filesystem::path shaders = "../src/shaders";
 std::filesystem::path vertex_shader = "../src/shaders/vertex.glsl";
@@ -73,7 +77,9 @@ std::string readShaders(const std::string &filename) {
  */
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
-
+void key_callback(GLFWwindow *window, int key, int scancode, int action,
+                  int mods);
+void mouse_button_callback(GLFWwindow *window, int key, int action, int mods);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
@@ -254,6 +260,8 @@ int main() {
     // -------------------------------------------------------------------------------
     glfwSwapBuffers(window);
     glfwPollEvents();
+    glfwSetKeyCallback(window, key_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
   }
 
   // glfw: terminate, clearing all previously allocated GLFW
@@ -279,4 +287,43 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
   // and height will be significantly larger than specified on retina
   // displays.
   glViewport(0, 0, width, height);
+}
+
+/**
+ * @brief Prints the received keyboard input as a US keyboard.
+ *
+ * @param window window instance
+ * @param key integer code defined in the GLFW macros
+ * @param scancode window instance
+ * @param action Indicates whether the key is being pressed, held or released
+ * @param mods registers if a modifier key is being pressed
+ */
+
+void key_callback(GLFWwindow *window, int key, int scancode, int action,
+                  int mods) {
+  // singleton instance of the input_maps
+  input_mapping *input_mapInstance = input_mapping::getInstance();
+
+  if (mods)
+    std::cout << input_mapInstance->getModKeyName(mods) << " + ";
+  if (action == GLFW_PRESS)
+    std::cout << "Pressed: " << input_mapInstance->getKeyName(key) << std::endl;
+  if (action == GLFW_RELEASE)
+    std::cout << "Released: " << input_mapInstance->getKeyName(key)
+              << std::endl;
+  if (action == GLFW_REPEAT)
+    std::cout << "Holding: " << input_mapInstance->getKeyName(key) << std::endl;
+}
+
+void mouse_button_callback(GLFWwindow *window, int key, int action, int mods) {
+  input_mapping *input_mapInstance = input_mapping::getInstance();
+  if (action == GLFW_PRESS)
+    std::cout << "Pressed: " << input_mapInstance->getMouseKeyName(key)
+              << std::endl;
+  if (action == GLFW_RELEASE)
+    std::cout << "Released: " << input_mapInstance->getMouseKeyName(key)
+              << std::endl;
+  if (action == GLFW_REPEAT)
+    std::cout << "Holding: " << input_mapInstance->getMouseKeyName(key)
+              << std::endl;
 }
