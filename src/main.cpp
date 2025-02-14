@@ -8,6 +8,7 @@
  *
  ******************************************************************************/
 
+#include <cmath>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <filesystem>
@@ -229,7 +230,7 @@ int main() {
   glBindVertexArray(0);
 
   // uncomment this call to draw in wireframe polygons.
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
   // render loop
   // -----------
@@ -243,8 +244,15 @@ int main() {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // draw our first triangle
+    // here we run the program to dynamicallly change on the while loop
+    float timeValue = glfwGetTime();
+    float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+    int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+
+    // run the program
     glUseProgram(shaderProgram);
+    glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
     glBindVertexArray(VAO); // seeing as we only have a single VAO there's no
                             // need to bind it every time, but we'll do so to
                             // keep things a bit more organized
